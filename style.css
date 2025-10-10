@@ -1,0 +1,448 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.game-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    max-width: 1200px;
+    width: 100%;
+}
+
+/* ゲームヘッダー */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.game-header h1 {
+    color: #333;
+    font-size: 2.5em;
+    font-weight: bold;
+}
+
+.score-display {
+    font-size: 1.5em;
+    color: #667eea;
+    font-weight: bold;
+}
+
+/* メインゲームエリア */
+.game-main {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+/* ゲームボード */
+.game-board-container {
+    position: relative;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    gap: 2px;
+    background: #f8f9fa;
+    border: 3px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px;
+    position: relative;
+}
+
+.game-board .cell {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #e9ecef;
+    background: white;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.game-board .cell.filled {
+    background: #667eea;
+    border-color: #5a67d8;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ゴーストオーバーレイ */
+.ghost-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    border-radius: 10px;
+}
+
+.ghost-overlay .ghost-cell {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: rgba(102, 126, 234, 0.4);
+    border: 2px dashed #667eea;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.ghost-overlay .ghost-cell.visible {
+    opacity: 1;
+}
+
+/* ブロック待機エリア */
+.waiting-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 300px;
+}
+
+.waiting-area h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+}
+
+.block-queue {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+/* 待機ブロックコンテナ - 大きいブロックに合わせて調整 */
+.waiting-block-container {
+    width: 200px;
+    height: 200px;
+    border: 3px solid #dee2e6;
+    border-radius: 15px;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: grab;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.waiting-block-container:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.waiting-block-container:active {
+    cursor: grabbing;
+    transform: scale(0.95);
+}
+
+/* 待機ブロック内のブロック表示 */
+.waiting-block {
+    display: grid;
+    gap: 2px;
+    position: relative;
+}
+
+.waiting-block .block-cell {
+    width: 25px;
+    height: 25px;
+    background: #667eea;
+    border-radius: 3px;
+    border: 1px solid #5a67d8;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+/* ドラッグ中のブロック */
+.dragging-block {
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+    transform: scale(1.1);
+    opacity: 0.9;
+}
+
+.dragging-block .block-cell {
+    width: 30px;
+    height: 30px;
+    background: #667eea;
+    border: 2px solid #5a67d8;
+    border-radius: 4px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* ゲーム情報エリア */
+.game-info {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5a67d8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.instructions {
+    margin-top: 20px;
+    color: #666;
+}
+
+.instructions p {
+    margin: 5px 0;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .game-main {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+    
+    .game-board {
+        grid-template-columns: repeat(10, 35px);
+        grid-template-rows: repeat(10, 35px);
+    }
+    
+    .game-board .cell {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .waiting-block-container {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .block-queue {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+}
+
+/* アニメーション */
+@keyframes blockPlace {
+    0% { transform: scale(1.2); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+.cell.placed {
+    animation: blockPlace 0.3s ease;
+}
+
+@keyframes lineClear {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.1); }
+    100% { opacity: 0; transform: scale(0.8); }
+}
+
+.cell.clearing {
+    animation: lineClear 0.5s ease;
+}
+
+/* ブロック形状用のグリッドクラス */
+.shape-1x1 { grid-template-columns: repeat(1, 25px); }
+.shape-2x2 { grid-template-columns: repeat(2, 25px); }
+.shape-3x3 { grid-template-columns: repeat(3, 25px); }
+.shape-4x4 { grid-template-columns: repeat(4, 25px); }
+.shape-5x5 { grid-template-columns: repeat(5, 25px); }
+
+/* ブロック配置不可能な状態 */
+.waiting-block-container.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #dc3545;
+    background: #f8d7da;
+}
+
+.waiting-block-container.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* ===== 特殊ブロック用スタイル ===== */
+
+/* 特殊ブロックコンテナ */
+.waiting-block-container.special-container {
+    border: 3px solid #ef4444;
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    position: relative;
+}
+
+.waiting-block-container.special-container:before {
+    content: '✨';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #ef4444;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    animation: specialGlow 2s ease-in-out infinite alternate;
+}
+
+.waiting-block-container.special-container:hover {
+    border-color: #dc2626;
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+}
+
+/* 特殊ブロックセル */
+.special-block {
+    position: relative;
+    overflow: visible;
+}
+
+.special-block:after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #fbbf24, #f59e0b, #fbbf24);
+    border-radius: 5px;
+    z-index: -1;
+    animation: specialShimmer 1.5s ease-in-out infinite;
+}
+
+/* ドラッグ中の特殊ブロック */
+.special-dragging {
+    animation: specialDragPulse 1s ease-in-out infinite;
+}
+
+/* 特殊ブロックのアニメーション */
+@keyframes specialGlow {
+    0% {
+        box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+        transform: scale(1);
+    }
+    100% {
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+        transform: scale(1.1);
+    }
+}
+
+@keyframes specialShimmer {
+    0%, 100% {
+        background-position: -100% 0;
+    }
+    50% {
+        background-position: 100% 0;
+    }
+}
+
+@keyframes specialDragPulse {
+    0%, 100% {
+        filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6)) brightness(1);
+    }
+    50% {
+        filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.9)) brightness(1.2);
+    }
+}
+
+@keyframes specialPlacementPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(4);
+        opacity: 0;
+    }
+}
+
+@keyframes specialScorePopup {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5) rotate(-5deg);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2) rotate(2deg);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1) rotate(-1deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -120%) scale(1) rotate(0deg);
+    }
+}
+
+/* 新しいブロック形状用のグリッドクラス */
+.shape-1x2 { grid-template-columns: repeat(1, 25px); }
+.shape-2x1 { grid-template-columns: repeat(2, 25px); }
+.shape-3x2 { grid-template-columns: repeat(3, 25px); }
+.shape-2x3 { grid-template-columns: repeat(2, 25px); }
+.shape-4x1 { grid-template-columns: repeat(4, 25px); }
+.shape-1x4 { grid-template-columns: repeat(1, 25px); }
+.shape-5x3 { grid-template-columns: repeat(5, 25px); }
+
+/* レスポンシブデザインの特殊ブロック対応 */
+@media (max-width: 768px) {
+    .waiting-block-container.special-container:before {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        top: -8px;
+        right: -8px;
+    }
+}

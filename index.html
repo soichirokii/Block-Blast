@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Blast JS</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- ゲームヘッダー -->
+        <div class="game-header">
+            <h1>Block Blast</h1>
+            <div class="score-display">
+                <span>Score: </span>
+                <span id="score">0</span>
+            </div>
+        </div>
+
+        <!-- メインゲームエリア -->
+        <div class="game-main">
+            <!-- ゲームボード -->
+            <div class="game-board-container">
+                <div id="game-board" class="game-board"></div>
+                <!-- ゴースト表示用のオーバーレイ -->
+                <div id="ghost-overlay" class="ghost-overlay"></div>
+            </div>
+
+            <!-- ブロック待機エリア -->
+            <div class="waiting-area">
+                <h3>次のブロック</h3>
+                <div class="block-queue">
+                    <div id="block-1" class="waiting-block-container">
+                        <div class="waiting-block"></div>
+                    </div>
+                    <div id="block-2" class="waiting-block-container">
+                        <div class="waiting-block"></div>
+                    </div>
+                    <div id="block-3" class="waiting-block-container">
+                        <div class="waiting-block"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ゲーム情報 -->
+        <div class="game-info">
+            <button id="new-game-btn" class="btn btn-primary">New Game</button>
+            <div class="instructions">
+                <p>ブロックをドラッグしてボードに配置しよう！</p>
+                <p>行や列を埋めるとブロックが消えるよ</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/blockShapes.js"></script>
+    <script src="js/gameLogic.js"></script>
+    <script src="js/dragAndDrop.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
